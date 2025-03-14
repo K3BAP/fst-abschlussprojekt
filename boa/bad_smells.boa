@@ -93,30 +93,32 @@ is_long_parameter_list := function(method: Method): bool {
 };
 
 calculate_smells := function(node: CodeRepository) {
-    smell_count: int = 0;
-    statement_count: int = 0;
+    class_count: int = 0;
+    class_smell_count: int = 0;
+    method_count: int = 0;
+    method_smell_count: int = 0;
+
     visit(node, visitor {
         before node: Declaration -> {
-            if (node.kind == TypeKind.CLASS && is_large_class(node)) {
-                smell_count = smell_count + 1;
+            if (node.kind == TypeKind.CLASS) {
+                class_count = class_count + 1;
+                if (is_large_class(node))
+                    class_smell_count = class_smell_count + 1;
             }
         }
 
         before node: Method -> {
+            method_count = method_count + 1;
             if (is_long_method(node)) {
-                smell_count = smell_count + 1;    
+                method_smell_count = method_smell_count + 1;    
             }
             if (is_long_parameter_list(node)) {
-                smell_count = smell_count + 1;
+                method_smell_count = method_smell_count + 1;
             }
         }
-
-        before node: Statement -> {
-            statement_count = statement_count + 1;
-        }
     });
-    if (statement_count > 0)
-        out[p.name][0] << format("%d; %d", smell_count, statement_count);
+    if (class_count > 0 && method_count > 0)
+        out[p.name][0] << format("Classes: %d/%d; Methods: %d/%d", class_smell_count, class_count, method_smell_count, method_count);
 };
 
 
