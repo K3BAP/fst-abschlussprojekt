@@ -1,0 +1,96 @@
+% !TeX spellcheck = de_DE
+\documentclass[12pt]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\usepackage{svg}
+\usepackage{float}
+\usepackage{caption}
+\usepackage{amsmath,amsthm,amsfonts,amssymb,amscd}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+\usepackage{hyperref}
+\usepackage[skip=3pt]{parskip}
+\usepackage[ngerman]{babel}
+\pagestyle{empty}
+\titleformat*{\section}{\large\bfseries}
+\titleformat*{\subsection}{\bfseries}
+
+%
+\geometry{
+	a4paper,
+	total={170mm,240mm},
+	left=20mm,
+	top=30mm,
+}
+
+\date{}
+%Bitte ausfüllen
+\newcommand\course{Fortgeschrittene Softwaretechnik}
+\newcommand\Name{Fabian Sponholz}
+\newcommand\Neptun{1561546}
+
+%Matheinheiten
+\newcommand\m{\:\textrm{m}}
+\newcommand\M{\:\Big[\textrm{m}\Big]}
+\newcommand\mm{\:\textrm{mm}}
+\newcommand\MM{\:\Big[\textrm{mm}\Big]}
+\newcommand\un{\underline}
+\newcommand\s{\:\textrm{s}}
+\newcommand\bS{\:\Big[\textrm{S}\Big]}
+\newcommand\ms{\:\frac{\textrm{m}}{\textrm{s}}}
+\newcommand\MS{\:\Big[\frac{\textrm{m}}{\textrm{s}}\Big]}
+\newcommand\mss{\:\frac{\textrm{m}}{\textrm{s}^2}}
+\newcommand\MSS{\:\Big[\frac{\textrm{m}}{\textrm{s}^2}\Big]}
+
+%Trennlinie
+\newcommand\separator{\rule{\linewidth}{0.5pt}}
+
+%Bitte nicht einstellen
+\renewcommand{\figurename}{Abbildung}
+\renewcommand{\tablename}{Tabelle}
+\pagestyle{fancyplain}
+\headheight 35pt
+\lhead{\Name\\\Neptun}
+\chead{\textbf{\Large Bericht Abschlussprojekt}}
+\rhead{\course \\ \today}
+\lfoot{}
+\cfoot{}
+\rfoot{\small\thepage}
+\headsep 1.5em
+
+\begin{document}
+\section{Einleitung}
+In meinem Abschlussprojekt habe ich untersucht, inwiefern ein Zusammenhang zwischen der Dichte der Bad Smells in Softwareprojekten mit der Anzahl der Autoren zusammenhängt.
+Dafür habe ich die folgenden Hypothesen überprüft:
+\begin{enumerate}
+	\item Projekte mit einer größeren Anzahl an Autoren haben eine höhere Bad-Smell-Dichte.
+	\item In Projekten korrelliert die Bad-Smell-Dichte mit der Anzahl der Autoren.
+\end{enumerate}
+
+Im Folgenden beschreibe ich zunächst meine Vorgehensweise und gehe dann auf die Ergebnisse meiner Auswertung ein.
+
+\section{Vorgehensweise}
+Grundsätzlich habe ich BOA \cite{boa} zur Datensammlung verwendet.
+Daher war der erste Schritt, Bad Smells zu identifizieren, die sich über die in BOA erhebbaren Metriken erkennen lassen.
+Hierbei handelt es sich um Bad Smells, die quantifizierbar sind:
+Viele Bad Smells, wie z.B. Unangebrachte Intimität, lassen sich nicht in Zahlen ausdrücken und können daher nicht mithilfe von BOA erfasst werden.
+
+Es gibt nach Fowler keine festgelegten Kennzahlen, wann zum Beispiel eine Methode zu viele Parameter oder zu viele Codezeilen enthält \cite{fowler2018refactoring}, daher habe ich mir hier eigene Grenzwerte überlegt, die ich passend finde.
+
+Folgende Bad Smells habe ich in diesem Projekt betrachtet:
+\begin{itemize}
+	\item \textbf{Large Class:} Große Klassen deuten darauf hin, dass die Klasse in mehrere Klassen mit eigenen Zuständigkeiten zerlegt werden könnte. \cite{fowler2018refactoring}
+	Als große Klasse definiere ich eine Klasse mit mehr als 15 Methoden oder mehr als 10 Attributen.
+	
+	\item \textbf{Long Method:} Lange Methoden sind unübersichtlich und schwer zu verstehen, was es Entwicklern später schwer macht, deren Funktion nachzuvollziehen. \cite{fowler2018refactoring}
+	Als lange Methode definiere ich eine Methode, die aus mehr als 15 Statements besteht oder deren Zyklomatische Komplexität 10 übersteigt.
+	Eine hohe Zyklomatische Komplexität deutet auf einen zu komplexen Kontrollfluss hin, der ebenfalls schwer nachzuvollziehen ist.
+	Auch kommt es oft vor, dass solche Methoden duplizierten Code enthalten. \cite{fowler2018refactoring}
+	
+	\item \textbf{Long Parameter List:} Methoden mit vielen Parametern sind oft verwirrend und sollten daher vermieden werden. \cite{fowler2018refactoring}
+	Ich betrachte in diesem Fall Methoden, die mehr als 4 Parameter haben.
+\end{itemize}
+
+\bibliographystyle{plain}
+\bibliography{references}
+\end{document}
