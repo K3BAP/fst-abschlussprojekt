@@ -1,3 +1,6 @@
+out: output collection[string][int] of string;
+p:Project = input;
+
 count_fields_methods := function(class: Declaration): array of int {
     counts: array of int = {0, 0};
 
@@ -64,11 +67,11 @@ is_large_class := function(class: Declaration): bool {
         return true;
     }
     # Number of methods
-    else if (counts[1] > 15) {
+    if (counts[1] > 15) {
         return true;
     }
     # No match
-    else return false;
+    return false;
 };
 
 is_long_method := function(method: Method): bool {
@@ -77,18 +80,48 @@ is_long_method := function(method: Method): bool {
     if (stmt_count > 15) {
         return true;
     }
-    else if (cyc_comp > 10) {
+    if (cyc_comp > 10) {
         return true;
     }
-    else return false;
+    return false;
 };
 
 is_long_parameter_list := function(method: Method): bool {
     par_count: int = count_parameters(method);
     if (par_count > 4) return true;
-    else return false;
+    return false;
 };
 
-out: output collection[string][int] of string;
-p:Project = input;
+calculate_smells := function(node: CodeRepository) {
+    smell_count: int = 0;
+    statement_count: int = 0;
+    visit(node, visitor {
+        before node: Declaration -> {
+            if (node.kind == TypeKind.CLASS && is_large_class(node)) {
+                smell_count = smell_count + 1;
+            }
+        }
 
+        before node: Method -> {
+            if (is_long_method(node)) {
+                smell_count = smell_count + 1;    
+            }
+            if (is_long_parameter_list(node)) {
+                smell_count = smell_count + 1;
+            }
+        }
+
+        before node: Statement -> {
+            statement_count = statement_count + 1;
+        }
+    });
+    if (statement_count > 0)
+        out[p.name][0] << format("%d; %d", smell_count, statement_count);
+};
+
+
+visit(p, visitor{
+    before node: CodeRepository -> {
+        calculate_smells(node);
+    }
+});
