@@ -1,0 +1,62 @@
+count_fields_methods := function(class: Declaration) : array of int {
+    counts: array of int = {0, 0};
+
+    counts[0] = len(class.fields);
+
+    visit (class, visitor {
+        before method: Method -> {
+            counts[1] = counts[1] + 1;
+        }
+    });
+
+    return counts;
+};
+
+cyclomatic_complexity := function(method: Method) : int {
+    cc: int = 1;
+    visit (method, visitor {
+        before statement: Statement -> {
+            if (statement.kind == StatementKind.IF 
+                || statement.kind == StatementKind.FOR
+                || statement.kind == StatementKind.WHILE
+                || statement.kind == StatementKind.DO
+            ) 
+            {
+                cc = cc + 1;
+            }
+
+            if (statement.kind == StatementKind.SWITCH) {
+                cases: int = 0;
+                visit (statement, visitor {
+                    before statement: Statement -> {
+                        if (statement.kind == StatementKind.CASE) {
+                            cases = cases + 1;
+                        }
+                    }
+                });
+
+                cc = cc + cases - 1;
+            }
+        }
+    });
+    return cc;
+};
+
+count_statements := function(method: Method) : int {
+    count: int = 0;
+    visit (method, visitor {
+        before statement: Statement -> {
+            count = count + 1;
+        }
+    });
+
+    return count;
+};
+
+count_parameters := function(method: Method): int {
+    return len(method.arguments);
+};
+
+out: output collection of string;
+p:Project = input;
+
