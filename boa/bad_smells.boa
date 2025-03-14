@@ -92,38 +92,60 @@ is_long_parameter_list := function(method: Method): bool {
     return false;
 };
 
-calculate_smells := function(node: CodeRepository) {
+count_authors := function(repo: CodeRepository, date: time): int {
+    authors: set of Person;
+
+    visit(repo, visitor {
+        before rev: Revision -> {
+            if (rev.commit_date < date) {
+                add(authors, rev.author);
+            }
+        }
+    });
+
+    return len(authors);
+};
+
+calculate_smells := function(repo: CodeRepository, year: int) {
     class_count: int = 0;
     class_smell_count: int = 0;
     method_count: int = 0;
     method_smell_count: int = 0;
 
-    visit(node, visitor {
-        before node: Declaration -> {
-            if (node.kind == TypeKind.CLASS) {
-                class_count = class_count + 1;
-                if (is_large_class(node))
-                    class_smell_count = class_smell_count + 1;
-            }
-        }
+    thisDate: time = addyear(T"Dec 31, 2000, 11:59:59 PM", (year - 2000));
+    author_count: int = count_authors(repo, thisDate);
+    snapshot := getsnapshot(repo, thisDate);
 
-        before node: Method -> {
-            method_count = method_count + 1;
-            if (is_long_method(node)) {
-                method_smell_count = method_smell_count + 1;    
+    foreach (i: int; def(snapshot[i])) {
+        visit(snapshot[i], visitor {
+            before node: Declaration -> {
+                if (node.kind == TypeKind.CLASS) {
+                    class_count = class_count + 1;
+                    if (is_large_class(node))
+                        class_smell_count = class_smell_count + 1;
+                }
             }
-            if (is_long_parameter_list(node)) {
-                method_smell_count = method_smell_count + 1;
+
+            before node: Method -> {
+                method_count = method_count + 1;
+                if (is_long_method(node)) {
+                    method_smell_count = method_smell_count + 1;    
+                }
+                if (is_long_parameter_list(node)) {
+                    method_smell_count = method_smell_count + 1;
+                }
             }
-        }
-    });
+        });
+    }
+    
     if (class_count > 0 && method_count > 0)
-        out[p.name][0] << format("Classes: %d/%d; Methods: %d/%d", class_smell_count, class_count, method_smell_count, method_count);
+        out[p.name][year] << format("Classes: %d/%d; Methods: %d/%d; Authors: %d", class_smell_count, class_count, method_smell_count, method_count, author_count);
 };
 
 
 visit(p, visitor{
     before node: CodeRepository -> {
-        calculate_smells(node);
+        for (year: int = 2000; year <= 2020; year++)
+            calculate_smells(node, year);
     }
 });
