@@ -145,7 +145,7 @@ calculate_smells := function(repo: CodeRepository, year: int) {
 
 visit(p, visitor{
     before node: CodeRepository -> {
-        for (year: int = 2000; year <= 2020; year++)
+        for (year: int = 2000; year <= 2022; year++)
             calculate_smells(node, year);
     }
 });
