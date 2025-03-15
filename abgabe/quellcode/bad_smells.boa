@@ -1,0 +1,151 @@
+out: output collection[string][int] of string;
+p:Project = input;
+
+count_fields_methods := function(class: Declaration): array of int {
+    counts: array of int = {0, 0};
+
+    counts[0] = len(class.fields);
+
+    visit (class, visitor {
+        before method: Method -> {
+            counts[1] = counts[1] + 1;
+        }
+    });
+
+    return counts;
+};
+
+cyclomatic_complexity := function(method: Method): int {
+    cc: int = 1;
+    visit (method, visitor {
+        before statement: Statement -> {
+            if (statement.kind == StatementKind.IF 
+                || statement.kind == StatementKind.FOR
+                || statement.kind == StatementKind.WHILE
+                || statement.kind == StatementKind.DO
+            ) 
+            {
+                cc = cc + 1;
+            }
+
+            if (statement.kind == StatementKind.SWITCH) {
+                cases: int = 0;
+                visit (statement, visitor {
+                    before statement: Statement -> {
+                        if (statement.kind == StatementKind.CASE) {
+                            cases = cases + 1;
+                        }
+                    }
+                });
+
+                cc = cc + cases - 1;
+            }
+        }
+    });
+    return cc;
+};
+
+count_statements := function(method: Method): int {
+    count: int = 0;
+    visit (method, visitor {
+        before statement: Statement -> {
+            count = count + 1;
+        }
+    });
+
+    return count;
+};
+
+count_parameters := function(method: Method): int {
+    return len(method.arguments);
+};
+
+is_large_class := function(class: Declaration): bool {
+    counts: array of int = count_fields_methods(class);
+    # Number of class fields
+    if (counts[0] > 10) {
+        return true;
+    }
+    # Number of methods
+    if (counts[1] > 15) {
+        return true;
+    }
+    # No match
+    return false;
+};
+
+is_long_method := function(method: Method): bool {
+    stmt_count: int = count_statements(method);
+    cyc_comp: int = cyclomatic_complexity(method);
+    if (stmt_count > 15) {
+        return true;
+    }
+    if (cyc_comp > 10) {
+        return true;
+    }
+    return false;
+};
+
+is_long_parameter_list := function(method: Method): bool {
+    par_count: int = count_parameters(method);
+    if (par_count > 4) return true;
+    return false;
+};
+
+count_authors := function(repo: CodeRepository, date: time): int {
+    authors: set of Person;
+
+    visit(repo, visitor {
+        before rev: Revision -> {
+            if (rev.commit_date < date) {
+                add(authors, rev.author);
+            }
+        }
+    });
+
+    return len(authors);
+};
+
+calculate_smells := function(repo: CodeRepository, year: int) {
+    class_count: int = 0;
+    class_smell_count: int = 0;
+    method_count: int = 0;
+    method_smell_count: int = 0;
+
+    thisDate: time = addyear(T"Dec 31, 2000, 11:59:59 PM", (year - 2000));
+    author_count: int = count_authors(repo, thisDate);
+    snapshot := getsnapshot(repo, thisDate);
+
+    foreach (i: int; def(snapshot[i])) {
+        visit(snapshot[i], visitor {
+            before node: Declaration -> {
+                if (node.kind == TypeKind.CLASS) {
+                    class_count = class_count + 1;
+                    if (is_large_class(node))
+                        class_smell_count = class_smell_count + 1;
+                }
+            }
+
+            before node: Method -> {
+                method_count = method_count + 1;
+                if (is_long_method(node)) {
+                    method_smell_count = method_smell_count + 1;    
+                }
+                if (is_long_parameter_list(node)) {
+                    method_smell_count = method_smell_count + 1;
+                }
+            }
+        });
+    }
+    
+    if (class_count > 0 && method_count > 0)
+        out[p.name][year] << format("%d;%d;%d;%d;%d", class_smell_count, class_count, method_smell_count, method_count, author_count);
+};
+
+
+visit(p, visitor{
+    before node: CodeRepository -> {
+        for (year: int = 2000; year <= 2022; year++)
+            calculate_smells(node, year);
+    }
+});
