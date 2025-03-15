@@ -139,7 +139,7 @@ calculate_smells := function(repo: CodeRepository, year: int) {
     }
     
     if (class_count > 0 && method_count > 0)
-        out[p.name][year] << format("Classes: %d/%d; Methods: %d/%d; Authors: %d", class_smell_count, class_count, method_smell_count, method_count, author_count);
+        out[p.name][year] << format("%d;%d;%d;%d;%d", class_smell_count, class_count, method_smell_count, method_count, author_count);
 };
 
 
