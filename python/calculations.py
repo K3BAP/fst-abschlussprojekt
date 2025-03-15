@@ -6,11 +6,6 @@ import statsmodels.api as sm
 import statsmodels.formula.api as smf
 
 # --- Daten einlesen und parsen ---
-# Annahme: Die Datei heißt "data.txt" und enthält Zeilen wie:
-# out[QLyine/uniWorkspace][2020] = 1;43;46;111;1
-# wobei die Zahlen folgendes bedeuten:
-# Bad Smells in Klassen; Klassen gesamt; Bad Smells in Methoden; Methoden gesamt; Anzahl Autoren
-
 filename = "../data/small-output.txt"
 data_list = []
 
@@ -89,7 +84,6 @@ model_between_methods = smf.ols("density_methods ~ autoren", data=agg).fit()
 print(model_between_methods.summary())
 
 # --- Within-Subject Analyse ---
-# Mixed-Effects Modelle, die projektspezifische Zufallseffekte berücksichtigen
 print("\n--- Within-Subject Analyse ---")
 
 # Für density_classes
