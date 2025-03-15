@@ -73,7 +73,7 @@ Im Folgenden beschreibe ich zunächst meine Vorgehensweise und gehe dann auf die
 Grundsätzlich habe ich BOA \cite{boa} zur Datensammlung verwendet.
 Daher war der erste Schritt, Bad Smells zu identifizieren, die sich über die in BOA erhebbaren Metriken erkennen lassen.
 Hierbei handelt es sich um Bad Smells, die quantifizierbar sind:
-Viele Bad Smells, wie z.B. Unangebrachte Intimität, lassen sich nicht in Zahlen ausdrücken und können daher nicht mithilfe von BOA erfasst werden.
+Viele Bad Smells, wie z.B. Unangebrachte Intimität, lassen sich nicht direkt aus einer Analyse des Syntaxbaums ableiten und können daher nicht mithilfe von BOA erfasst werden.
 
 Es gibt nach Fowler keine festgelegten Kennzahlen, wann zum Beispiel eine Methode zu viele Parameter oder zu viele Codezeilen enthält \cite{fowler2018refactoring}, daher habe ich mir hier eigene Grenzwerte überlegt, die ich passend finde.
 Diese Grenzwerte können für spätere Experimente auch nochmal angepasst werden.
@@ -93,7 +93,7 @@ Folgende Bad Smells habe ich in diesem Projekt betrachtet:
 \end{itemize}
 
 \subsection{Implementierung des BOA-Skripts}
-Bei der Implementierung des BOA-Skriptes habe ich mit mehreren Abstraktionsebenen gearbeitet, um so einen besser lesbaren und auch für mich selbst verständlichen Code zu erhalten.
+Bei der Implementierung des BOA-Skriptes habe ich mit mehreren Abstraktionsebenen gearbeitet, um so einen besser lesbaren und auch für mich selbst besser verständlichen Code zu erhalten.
 Zuerst habe ich einige Hilfsfunktionen definiert, die mich nach und nach ans Ziel gebracht haben.
 
 \subsubsection{Erste Abstraktionsebene}
@@ -103,12 +103,12 @@ Zum Zählen der Parameter konnte ich einfach die \texttt{len()}-Funktion verwend
 Außerdem habe ich eine Funktion zum zählen aller Autoren implementiert, die bis zu einem bestimmten Datum an einem Projekt mitgearbeitet haben; diese Funktion zähle ich auch zur ersten Abstraktionsebene.
 
 \subsubsection{Zweite Abstraktionsebene}
-Die zweite Abstraktionsebene besteht aus Funktionen, deren Rückgabetyp je ein boolscher Wert ist, und die die Kriterien der jeweiligen Bad Smells überprüfen: Je eine Methode zum Erkennen großer Klassen, langer Methoden und langer Parameterlisten.
+Die zweite Abstraktionsebene besteht aus Funktionen, deren Rückgabetyp je ein boolscher Wert ist und die die Kriterien der jeweiligen Bad Smells überprüfen: Je eine Methode zum Erkennen großer Klassen, langer Methoden und langer Parameterlisten.
 Dafür werden die Rückgabewerte der Funktionen der ersten Ebene jeweils mit den definierten Grenzwerten abgeglichen.
 
 \subsubsection{Dritte Abstraktionsebene}
 Auf der dritten Abstraktionsebene gibt es eine einzige Funktion, die ein \texttt{CodeRepository} und eine Jahreszahl als Parameter erhält, und dann alle nötigen Kennzahlen für diese berechnet und in den Output schreibt.
-Hier wird in einem Visitor über einen Snapshot für das übergebene Jahr iteriert, und je Zählvariablen für Bad Smells in Klassen, Gesamtzahl der Klassen, Bad Smells in Methoden und Gesamtzahl der Methoden hochgezählt.
+Hier wird in einem Visitor über einen Snapshot für das übergebene Jahr iteriert und je Zählvariablen für Bad Smells in Klassen, Gesamtzahl der Klassen, Bad Smells in Methoden und Gesamtzahl der Methoden hochgezählt.
 Schlussendlich werden all diese Zahlen zusammen mit der Anzahl der Autoren in einem String in den Output geschrieben, mit Projektname und Jahreszahl als Index.
 
 Die Hauptroutine ist ein Visitor, der für jedes \texttt{CodeRepository} die Kennzahlen für die Jahre 2000 bis 2022 mithilfe dieser Funktion berechnet.
@@ -118,10 +118,11 @@ Während der Entwicklung des Skriptes habe ich den Datensatz \emph{2019 October/
 Zunächst sah es auch so aus, als würde die Anfrage korrekt bearbeitet werden, allerdings war der Job nach ca. 20 Stunden Wartezeit immer noch nicht abgeschlossen.
 Unter \emph{Job Status} wurde \emph{map() completion: 1.0; reduce() completion: 0.0} angezeigt, somit denke ich, dass es hier intern zu einem Fehler gekommen sein muss.
 
-Beim Datensatz \emph{2022 Jan/Java} endete die Berechnung nach etwa zwei Stunden mit einem Error, der nicht weiter beschrieben wird.
+Bei den Datensätzen \emph{2022 Jan/Java} und \emph{2022 Feb/Python} endete die Berechnung nach etwa zwei Stunden mit einem Error, der nicht weiter beschrieben wird.
 Das gleiche Phänomen ist bereits in der Übung aufgetreten.
 
-%TODO: Endgültig verwendeten Datensatz aufzeigen
+Einzig der Datensatz \emph{2019 October/GitHub (medium)} lief erfolgreich durch und hält eine ausreichende Sample Size bereit, um ein signifikantes Ergebnis zu erzielen.
+Somit habe ich die Berechnungen letztendlich mit diesem Datensatz durchgeführt.
 
 \subsection{Auswertung}
 Für die Auswertung habe ich die Bad-Smell-Dichte auf Klassenebene und die Bad-Smell-Dichte auf Methodenebene unabhängig voneinander betrachtet und alle Tests mit beiden Werten ausgeführt, da sie sich in meinen Augen nicht in einen Topf werfen lassen:
@@ -146,6 +147,41 @@ Folgende statistische Tests habe ich auf die Daten angewandt:
 \end{itemize}
 
 \section{Ergebnisse und Interpretation}
+Folgende Ergebnisse habe ich bei der Statistischen Auswertung der Daten aus dem Datensatz \emph{2019 October/GitHub (medium)} erzielt:
+\subsection{Between-Subject Analyse}
+\begin{itemize}
+	\item Bad Smells auf Klassenebene:
+	\begin{itemize}
+		\item Pearson-Korrelation: $r = 0.057$ ($p < 0.001$) und Regressionskoeffizient = $0.0011$ zeigen einen statistisch signifikanten, aber äußerst schwachen positiven Zusammenhang zwischen der durchschnittlichen Autorenanzahl und der Dichte von Klassenbezogenen Bad Smells.
+		\item Der $R^2$-Wert von $0.003$ bedeutet, dass lediglich ca. $0,3\%$ der Varianz in der Dichte durch die Autorenanzahl erklärt werden.
+	\end{itemize}
+	
+	\item Bad Smells auf Methodenebene:
+	\begin{itemize}
+		\item Pearson-Korrelation: $r = 0.028$ ($p < 0.001$) sowie ein Regressionskoeffizient von $0.0005$ deuten ebenfalls auf einen statistisch signifikanten, jedoch praktisch vernachlässigbaren positiven Zusammenhang hin.
+		\item Hier erklärt die Autorenanzahl nur ca. $0,1\%$ der Varianz ($R^2 = 0.001$).
+	\end{itemize}
+\end{itemize}
+
+\subsection{Within-Subject Analyse}
+\begin{itemize}
+	\item Bad Smells auf Klassenebene:
+	\begin{itemize}
+		\item Das Mixed-Effects Modell ergibt einen negativen Effekt (Koeffizient ca. $-0.000$, $z = -5.613$, $p < 0.001$).
+		\item Das heißt, wenn innerhalb eines Projekts die Autorenanzahl ansteigt, sinkt – wenn auch minimal – die Klassen-Density.
+	\end{itemize}
+	\item Bad Smells auf Methodenebene:
+	\begin{itemize}
+		\item Auch hier zeigt das Modell einen negativen Effekt (Koeffizient ca. $-0.000$, $z = -29.843$, $p < 0.001$), was auf einen sehr geringen Rückgang der Methoden-Density bei steigender Autorenanzahl hindeutet.
+	\end{itemize}
+\end{itemize}
+
+\section{Zusammenfassung}
+Zusammenfassend lässt sich sagen, dass kein bedeutender Zusammenhang (Korrelation) zwischen der Anzahl der Autoren in einem Softwareprojekt und der Dichte der Bad Smells nachgewiesen werden konnte:
+Weder zwischen verschiedenen Softwareprojekten, noch innerhalb eines Projekts.
+Man muss jedoch beachten, dass hier nur ein kleiner Teil der tatsächlich vorhandenen Bad Smells überhaupt betrachtet wurde;
+Bei einer detaillierteren und umfassenderen Analyse könnte das Ergebnis gegebenenfalls anders aussehen.
+
 
 \bibliographystyle{plain}
 \bibliography{references}
