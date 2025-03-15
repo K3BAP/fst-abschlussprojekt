@@ -1,0 +1,110 @@
+Erste Zeilen der eingelesenen Daten:
+          project  year  bs_klassen  total_klassen  bs_methoden  total_methoden  autoren  density_classes  density_methods
+0  0-0-/BankBlock  2013         3.0           60.0         20.0           270.0      2.0             0.05         0.074074
+1  0-0-/BankBlock  2014         3.0           60.0         20.0           270.0      2.0             0.05         0.074074
+2  0-0-/BankBlock  2015         3.0           60.0         20.0           270.0      2.0             0.05         0.074074
+3  0-0-/BankBlock  2016         3.0           60.0         20.0           270.0      2.0             0.05         0.074074
+4  0-0-/BankBlock  2017         3.0           60.0         20.0           270.0      2.0             0.05         0.074074
+
+Aggregierte Daten pro Projekt:
+                 project  autoren  density_classes  density_methods
+0         0-0-/BankBlock      2.0         0.050000         0.074074
+1       0-kaladin/dalvik    120.0         0.129208         0.131252
+2   0002647302/FSO_JAVAI      1.0         0.148148         0.250000
+3  0002647302/FSO_MDFIII      1.0         0.076923         0.217391
+4              01mf02/DS      5.0         0.222222         0.222222
+
+--- Between-Subject Analyse ---
+
+*** Analysen für density_classes ***
+Pearson-Korrelation (Klassen): 0.057, p-Wert: 0.000
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:        density_classes   R-squared:                       0.003
+Model:                            OLS   Adj. R-squared:                  0.003
+Method:                 Least Squares   F-statistic:                     88.87
+Date:                Sat, 15 Mar 2025   Prob (F-statistic):           4.55e-21
+Time:                        18:32:16   Log-Likelihood:                 11188.
+No. Observations:               27512   AIC:                        -2.237e+04
+Df Residuals:                   27510   BIC:                        -2.235e+04
+Df Model:                           1                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+Intercept      0.1092      0.001    106.725      0.000       0.107       0.111
+autoren        0.0011      0.000      9.427      0.000       0.001       0.001
+==============================================================================
+Omnibus:                    14798.431   Durbin-Watson:                   1.970
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):           118538.148
+Skew:                           2.502   Prob(JB):                         0.00
+Kurtosis:                      11.853   Cond. No.                         8.85
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+*** Analysen für density_methods ***
+Pearson-Korrelation (Methoden): 0.028, p-Wert: 0.000
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:        density_methods   R-squared:                       0.001
+Model:                            OLS   Adj. R-squared:                  0.001
+Method:                 Least Squares   F-statistic:                     21.58
+Date:                Sat, 15 Mar 2025   Prob (F-statistic):           3.40e-06
+Time:                        18:32:16   Log-Likelihood:                 12455.
+No. Observations:               27512   AIC:                        -2.491e+04
+Df Residuals:                   27510   BIC:                        -2.489e+04
+Df Model:                           1                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+Intercept      0.1347      0.001    137.883      0.000       0.133       0.137
+autoren        0.0005      0.000      4.646      0.000       0.000       0.001
+==============================================================================
+Omnibus:                    16803.173   Durbin-Watson:                   1.940
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):           202870.924
+Skew:                           2.779   Prob(JB):                         0.00
+Kurtosis:                      15.086   Cond. No.                         8.85
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+--- Within-Subject Analyse ---
+
+*** Mixed-Effects Modell für density_classes ***
+            Mixed Linear Model Regression Results
+=============================================================
+Model:            MixedLM Dependent Variable: density_classes
+No. Observations: 216353  Method:             REML           
+No. Groups:       27512   Scale:              0.0003         
+Min. group size:  1       Log-Likelihood:     485024.6999    
+Max. group size:  20      Converged:          Yes            
+Mean group size:  7.9                                        
+--------------------------------------------------------------
+              Coef.   Std.Err.     z     P>|z|  [0.025  0.975]
+--------------------------------------------------------------
+Intercept      0.112     0.001  115.488  0.000   0.110   0.114
+autoren       -0.000     0.000   -5.613  0.000  -0.000  -0.000
+Group Var      0.026     0.014                                
+=============================================================
+
+
+*** Mixed-Effects Modell für density_methods ***
+            Mixed Linear Model Regression Results
+=============================================================
+Model:            MixedLM Dependent Variable: density_methods
+No. Observations: 216353  Method:             REML           
+No. Groups:       27512   Scale:              0.0002         
+Min. group size:  1       Log-Likelihood:     526760.5207    
+Max. group size:  20      Converged:          Yes            
+Mean group size:  7.9                                        
+--------------------------------------------------------------
+              Coef.   Std.Err.     z     P>|z|  [0.025  0.975]
+--------------------------------------------------------------
+Intercept      0.137     0.001  147.353  0.000   0.135   0.139
+autoren       -0.000     0.000  -29.843  0.000  -0.000  -0.000
+Group Var      0.024     0.016                                
+=============================================================

@@ -6,7 +6,7 @@ import statsmodels.api as sm
 import statsmodels.formula.api as smf
 
 # --- Daten einlesen und parsen ---
-filename = "../data/small-output.txt"
+filename = "../data/medium-output.txt"
 data_list = []
 
 with open(filename, "r", encoding="utf-8") as f:
