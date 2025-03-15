@@ -76,6 +76,7 @@ Hierbei handelt es sich um Bad Smells, die quantifizierbar sind:
 Viele Bad Smells, wie z.B. Unangebrachte Intimität, lassen sich nicht in Zahlen ausdrücken und können daher nicht mithilfe von BOA erfasst werden.
 
 Es gibt nach Fowler keine festgelegten Kennzahlen, wann zum Beispiel eine Methode zu viele Parameter oder zu viele Codezeilen enthält \cite{fowler2018refactoring}, daher habe ich mir hier eigene Grenzwerte überlegt, die ich passend finde.
+Diese Grenzwerte können für spätere Experimente auch nochmal angepasst werden.
 
 Folgende Bad Smells habe ich in diesem Projekt betrachtet:
 \begin{itemize}
@@ -90,6 +91,32 @@ Folgende Bad Smells habe ich in diesem Projekt betrachtet:
 	\item \textbf{Long Parameter List:} Methoden mit vielen Parametern sind oft verwirrend und sollten daher vermieden werden. \cite{fowler2018refactoring}
 	Ich betrachte in diesem Fall Methoden, die mehr als 4 Parameter haben.
 \end{itemize}
+
+\subsection{Implementierung des BOA-Skripts}
+Bei der Implementierung des BOA-Skriptes habe ich mit mehreren Abstraktionsebenen gearbeitet, um so einen besser lesbaren und auch für mich selbst verständlichen Code zu erhalten.
+Zuerst habe ich einige Hilfsfunktionen definiert, die mich nach und nach ans Ziel gebracht haben.
+
+\subsubsection{Erste Abstraktionsebene}
+Auf der untersten Abstraktionsebene habe ich Funktionen definiert, die die für mich relevanten Kennzahlen (Anzahl Klassenfelder und -methoden, Zyklomatische Komplexität einer Methode, Anzahl von Statements einer Methode, Anzahl der Parameter einer Methode) bestimmen.
+Dafür habe ich meist Visitoren in Kombination mit if-Bedingungen verwendet, um so je eine Zählvariable zu erhöhen.
+Zum Zählen der Parameter konnte ich einfach die \texttt{len()}-Funktion verwenden.
+Außerdem habe ich eine Funktion zum zählen aller Autoren implementiert, die bis zu einem bestimmten Datum an einem Projekt mitgearbeitet haben; diese Funktion zähle ich auch zur ersten Abstraktionsebene.
+
+\subsubsection{Zweite Abstraktionsebene}
+Die zweite Abstraktionsebene besteht aus Funktionen, deren Rückgabetyp je ein boolscher Wert ist, und die die Kriterien der jeweiligen Bad Smells überprüfen: Je eine Methode zum Erkennen großer Klassen, langer Methoden und langer Parameterlisten.
+Dafür werden die Rückgabewerte der Funktionen der ersten Ebene jeweils mit den definierten Grenzwerten abgeglichen.
+
+\subsubsection{Dritte Abstraktionsebene}
+Auf der dritten Abstraktionsebene gibt es eine einzige Funktion, die ein \texttt{CodeRepository} und eine Jahreszahl als Parameter erhält, und dann alle nötigen Kennzahlen für diese berechnet und in den Output schreibt.
+Hier wird in einem Visitor über einen Snapshot für das übergebene Jahr iteriert, und je Zählvariablen für Bad Smells in Klassen, Gesamtzahl der Klassen, Bad Smells in Methoden und Gesamtzahl der Methoden hochgezählt.
+Schlussendlich werden all diese Zahlen zusammen mit der Anzahl der Autoren in einem String in den Output geschrieben, mit Projektname und Jahreszahl als Index.
+
+Die Hauptroutine ist ein Visitor, der für jedes \texttt{CodeRepository} die Kennzahlen für die Jahre 2000 bis 2022 mithilfe dieser Funktion berechnet.
+
+\subsection{Verwendete Datensätze}
+Während der Entwicklung des Skriptes habe ich den Datensatz \emph{2019 October/GitHub (small)} verwendet, daher wollte ich, um eine möglichst große Variation verschiedener Softwareprojekte zu betrachten, den Datensatz \emph{2019 October/GitHub} für die endgültige Datenerhebung verwenden.
+Zunächst sah es auch so aus, als würde die Anfrage korrekt bearbeitet werden, allerdings war der Job nach ca. 20 Stunden Wartezeit immer noch nicht abgeschlossen.
+Unter \emph{Job Status} wurde \emph{map() completion: 1.0; reduce() completion: 0.0} angezeigt, somit denke ich, dass es hier intern zu einem Fehler gekommen sein muss.
 
 \bibliographystyle{plain}
 \bibliography{references}
