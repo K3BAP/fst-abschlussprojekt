@@ -63,8 +63,8 @@
 In meinem Abschlussprojekt habe ich untersucht, inwiefern ein Zusammenhang zwischen der Dichte der Bad Smells in Softwareprojekten mit der Anzahl der Autoren zusammenhängt.
 Dafür habe ich die folgenden Hypothesen überprüft:
 \begin{enumerate}
-	\item Projekte mit einer größeren Anzahl an Autoren haben eine höhere Bad-Smell-Dichte.
-	\item In Projekten korrelliert die Bad-Smell-Dichte mit der Anzahl der Autoren.
+	\item Projekte mit einer größeren Anzahl an Autoren haben eine höhere Bad-Smell-Dichte. (between-subject)
+	\item In Projekten korrelliert die Bad-Smell-Dichte mit der Anzahl der Autoren. (within-subject)
 \end{enumerate}
 
 Im Folgenden beschreibe ich zunächst meine Vorgehensweise und gehe dann auf die Ergebnisse meiner Auswertung ein.
@@ -117,6 +117,35 @@ Die Hauptroutine ist ein Visitor, der für jedes \texttt{CodeRepository} die Ken
 Während der Entwicklung des Skriptes habe ich den Datensatz \emph{2019 October/GitHub (small)} verwendet, daher wollte ich, um eine möglichst große Variation verschiedener Softwareprojekte zu betrachten, den Datensatz \emph{2019 October/GitHub} für die endgültige Datenerhebung verwenden.
 Zunächst sah es auch so aus, als würde die Anfrage korrekt bearbeitet werden, allerdings war der Job nach ca. 20 Stunden Wartezeit immer noch nicht abgeschlossen.
 Unter \emph{Job Status} wurde \emph{map() completion: 1.0; reduce() completion: 0.0} angezeigt, somit denke ich, dass es hier intern zu einem Fehler gekommen sein muss.
+
+Beim Datensatz \emph{2022 Jan/Java} endete die Berechnung nach etwa zwei Stunden mit einem Error, der nicht weiter beschrieben wird.
+Das gleiche Phänomen ist bereits in der Übung aufgetreten.
+
+%TODO: Endgültig verwendeten Datensatz aufzeigen
+
+\subsection{Auswertung}
+Für die Auswertung habe ich die Bad-Smell-Dichte auf Klassenebene und die Bad-Smell-Dichte auf Methodenebene unabhängig voneinander betrachtet und alle Tests mit beiden Werten ausgeführt, da sie sich in meinen Augen nicht in einen Topf werfen lassen:
+Da ein Projekt meist weniger Klassen als Methoden hat, wären die Bad Smells auf Klassenebene sonst unterrepräsentiert.
+
+Für die Auswertung habe ich Python mit den Bibliotheken \emph{Pandas, Numpy, Scipy und Statsmodels} verwendet.
+Folgende statistische Tests habe ich auf die Daten angewandt:
+
+\begin{itemize}
+	\item Between-Subject Analyse:
+	\begin{itemize}
+		\item \textbf{Pearson-Korrelation}: Zur Untersuchung des linearen Zusammenhangs zwischen der durchschnittlichen Anzahl der Autoren und der Bad Smell Density (für Klassen und Methoden) über verschiedene Projekte hinweg.
+		\item \textbf{Lineare Regression}: Um den Einfluss der Autorenanzahl auf die Density zu modellieren und den Anteil der erklärten Varianz (R²) zu quantifizieren.
+	\end{itemize}
+	\textbf{Warum}: Diese Methoden ermöglichen es, aggregierte Zusammenhänge auf Projektebene zu analysieren und einen direkten Effekt der Autorenanzahl zu bestimmen.
+	
+	\item Within-Subject Analyse:
+	\begin{itemize}
+		\item \textbf{Mixed-Effects Modell}: Zur Analyse des Einflusses der Autorenanzahl auf die Bad Smell Density innerhalb einzelner Projekte über die Zeit, wobei projektspezifische Unterschiede als Zufallseffekte berücksichtigt werden.
+	\end{itemize}
+	\textbf{Warum}: Dieses Modell ist geeignet, um Veränderungen innerhalb der Projekte zu untersuchen und individuelle Unterschiede zwischen den Projekten zu kontrollieren.
+\end{itemize}
+
+\section{Ergebnisse und Interpretation}
 
 \bibliographystyle{plain}
 \bibliography{references}
